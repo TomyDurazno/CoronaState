@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CoronaManager
 {
-    public class CoronaState
+    public class CoronaCountryState
     {
         public string country { get; set; }
         public int cases { get; set; }

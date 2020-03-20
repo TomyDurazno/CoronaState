@@ -3,6 +3,7 @@
     donaChart();
     stackedChart();
     stackedChartsouth();
+    byContinent();
 })
 
 function pieChart() {
@@ -160,4 +161,39 @@ function stackedChartsouth() {
     })
 }
 
-globalColors = [ window.chartColors.red, window.chartColors.blue, window.chartColors.green, window.chartColors.yellow, window.chartColors.orange, window.chartColors.purple, window.chartColors.grey];
+function byContinent() {
+
+    function onSuccess(data) {
+        s = {
+            type: "pie",
+            data: {
+                datasets: [{
+                    data: data.map(d => d.cases),
+                    backgroundColor: data.map((d, i) => globalColors[i])
+                }],
+                labels: data.map(d => d.name)
+            },
+            options: {
+                responsive: !0
+            }
+        };
+
+        var pie = document.getElementById("chart-area-continents").getContext("2d");
+        window.myPie2 = new Chart(pie, s);
+    }
+
+    $.ajax({
+        url: "/byContinent",
+        success: onSuccess
+    })
+}
+
+globalColors = [
+    window.chartColors.blue,
+    window.chartColors.green,
+    window.chartColors.red,
+    window.chartColors.yellow, 
+    window.chartColors.orange,
+    window.chartColors.purple,
+    window.chartColors.grey
+];

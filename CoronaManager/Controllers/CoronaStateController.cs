@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CoronaManager.Models;
+using CoronaManager.Models.DTO;
 using CoronaManager.Services;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
@@ -22,17 +25,26 @@ namespace CoronaManager.Controllers
         
         CoronaNinjaAPIService serviceNinja;
 
-        #endregion
+        #endregion        
 
         #region Constructor
 
-        public CoronaStateController(ILogger<CoronaStateController> logger)
+        public CoronaStateController(ILogger<CoronaStateController> logger, IWebHostEnvironment env)
         {
             _logger = logger;
-            serviceNinja = new CoronaNinjaAPIService();
+         
+            serviceNinja = new CoronaNinjaAPIService(LocalPath(env));
         }
 
         #endregion
+
+        string LocalPath(IWebHostEnvironment env)
+            => env.ContentRootPath
+                + Path.DirectorySeparatorChar.ToString()
+                + "Data"
+                + Path.DirectorySeparatorChar.ToString()
+                + "Continents"
+                + Path.DirectorySeparatorChar.ToString();
 
         #region Endpoints
 
@@ -51,6 +63,14 @@ namespace CoronaManager.Controllers
         [HttpGet]
         [Route("/casesbystatus")]
         public async Task<BarChartDTO> CasesByStatus(bool south = false) => await serviceNinja.CasesByStatus(south);
+
+        [HttpGet]
+        [Route("/hopkins")]
+        public async Task<List<CoronaHopkinsCSSEState>> HopkinsState(bool south = false) => await serviceNinja.GetHopkinsState();
+
+        [HttpGet]
+        [Route("/bycontinent")]
+        public async Task<List<ContinentAndAmountsDTO>> AmountByContinent(bool south = false) => await serviceNinja.AmountByContinent();
 
         #endregion
     }

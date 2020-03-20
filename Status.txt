@@ -12,5 +12,23 @@ Status 0:
 		
 		- Agregar más estadísticas / otra API de backend para consultar
 		
+Status 1:
+
+		Se implementó lógica para pegarle a otro endpoint de ninja: https://corona.lmao.ninja/jhucsse, devuelve algo como:
 		
+		
+		{
+			"country": "China",
+			"province": "Hubei",
+			"updatedAt": "2020-03-19T10:13:14",
+			"stats": {
+			  "confirmed": "67800",
+			  "deaths": "3130",
+			  "recovered": "57682"
+			},
+			"coordinates": {
+			  "lattitude": null,
+			  "longitude": "112.2707"
+			}
+		  }
 		
