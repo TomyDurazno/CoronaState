@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace CoronaManager
 {
@@ -13,5 +14,12 @@ namespace CoronaManager
         public int active { get; set; }
         public int critical { get; set; }
         public int casesPerOneMillion { get; set; }
+
+        public Dictionary<string, int> RadarData => new Dictionary<string, int>() 
+        {
+            { "recovered" , recovered },
+            { "active" , active },
+            { "critical" , critical }
+        };
     }
 }
