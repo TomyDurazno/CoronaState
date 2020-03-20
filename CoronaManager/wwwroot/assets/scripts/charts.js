@@ -155,7 +155,7 @@ function stackedChartsouth() {
     }
 
     $.ajax({
-        url: "/stackedbars?south=true",
+        url: "/casesbystatus?south=true",
         success: onSuccess
     })
 }

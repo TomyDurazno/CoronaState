@@ -1,0 +1,16 @@
+Status 0:
+		
+		- Se implementó una primera versión, se la subió a Azure en https://coronastate.azurewebsites.net/
+		
+		- El backend le pide la data a la api en https://corona.lmao.ninja/countries
+		
+		- Se creó el repo en github y se commiteó el código
+		
+		Faltaría:
+		
+		- Hacer que la webapp funcione como PWA (progressive web app)
+		
+		- Agregar más estadísticas / otra API de backend para consultar
+		
+		
+		
