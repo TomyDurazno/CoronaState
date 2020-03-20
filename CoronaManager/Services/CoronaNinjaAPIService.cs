@@ -1,5 +1,6 @@
 ﻿using CoronaManager.Models;
 using CoronaManager.Models.DTO;
+using CoronaManager.Properties;
 using Newtonsoft.Json.Linq;
 using Nito.AsyncEx;
 using RestSharp;
@@ -45,15 +46,19 @@ namespace CoronaManager.Services
             return JArray.Parse(result.Content).ToObject<List<CoronaHopkinsCSSEState>>();
         }
 
-        async Task<List<Continent>> GetContinents(string localpath)
+        async Task<List<Continent>> GetContinents()
         {
-            var files = new [] { "Africa.txt", "Asia.txt", "Oceania.txt", "Europe.txt", "North America.txt", "South America.txt" };
+            var files = new [] 
+            {
+                new { name = "Africa", Countries = Resources.Africa.Split(Environment.NewLine).ToList() },
+                new { name = "Asia", Countries = Resources.Asia.Split(Environment.NewLine).ToList()  },
+                new { name = "Oceania", Countries = Resources.Oceania.Split(Environment.NewLine).ToList()  },
+                new { name = "Europe", Countries = Resources.Europe.Split(Environment.NewLine).ToList()  },
+                new { name = "North America", Countries =  Resources.North_America.Split(Environment.NewLine).ToList()  },
+                new { name = "South America", Countries = Resources.South_America.Split(Environment.NewLine).ToList()  } 
+            };
 
-            var paths = files.Select(f => (localpath, file: f));
-
-            var result = await Task.WhenAll(paths.Select(s => Read(s.localpath, s.file)));
-
-            return result.Select(r => new Continent() { Name = r.name, Countries = r.countries.ToList() }).ToList();
+            return files.Select(r => new Continent() { Name = r.name, Countries = r.Countries }).ToList();
         }
 
         async Task<(string name, IEnumerable<string> countries)> Read(string localpath, string pathToFile)
@@ -86,11 +91,11 @@ namespace CoronaManager.Services
 
         #region Constructor
 
-        public CoronaNinjaAPIService(string localpath)
+        public CoronaNinjaAPIService()
         {
             CountryState = new AsyncLazy<List<CoronaCountryState>>(() => GetCountryState());
             HopkinsCSSEState = new AsyncLazy<List<CoronaHopkinsCSSEState>>(() => GetHopkinsCSSEState());
-            ContinentsState = new AsyncLazy<List<Continent>>(() => GetContinents(localpath));
+            ContinentsState = new AsyncLazy<List<Continent>>(() => GetContinents());
             ContinentAndAmountsState = new AsyncLazy<List<ContinentAndAmountsDTO>>(() => GetAmountByContinent());
         }
 

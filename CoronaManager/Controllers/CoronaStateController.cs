@@ -33,18 +33,10 @@ namespace CoronaManager.Controllers
         {
             _logger = logger;
          
-            serviceNinja = new CoronaNinjaAPIService(LocalPath(env));
+            serviceNinja = new CoronaNinjaAPIService();
         }
 
         #endregion
-
-        string LocalPath(IWebHostEnvironment env)
-            => env.ContentRootPath
-                + Path.DirectorySeparatorChar.ToString()
-                + "Data"
-                + Path.DirectorySeparatorChar.ToString()
-                + "Continents"
-                + Path.DirectorySeparatorChar.ToString();
 
         #region Endpoints
 
@@ -70,7 +62,22 @@ namespace CoronaManager.Controllers
 
         [HttpGet]
         [Route("/bycontinent")]
-        public async Task<List<ContinentAndAmountsDTO>> AmountByContinent(bool south = false) => await serviceNinja.AmountByContinent();
+        public async Task<List<ContinentAndAmountsDTO>> AmountByContinent() 
+        {
+            try
+            {
+                var result = await serviceNinja.AmountByContinent();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                var c = new ContinentAndAmountsDTO(ex.Message, new List<CoronaCountryState>());
+
+                var d = new ContinentAndAmountsDTO(ex.GetType().Name, new List<CoronaCountryState>());
+
+                return new List<ContinentAndAmountsDTO>() { c, d };
+            }
+        }
 
         #endregion
     }
