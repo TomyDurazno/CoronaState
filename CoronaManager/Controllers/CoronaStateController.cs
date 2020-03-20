@@ -58,26 +58,11 @@ namespace CoronaManager.Controllers
 
         [HttpGet]
         [Route("/hopkins")]
-        public async Task<List<CoronaHopkinsCSSEState>> HopkinsState(bool south = false) => await serviceNinja.GetHopkinsState();
+        public async Task<List<CoronaHopkinsCSSEState>> HopkinsState() => await serviceNinja.GetHopkinsState();
 
         [HttpGet]
         [Route("/bycontinent")]
-        public async Task<List<ContinentAndAmountsDTO>> AmountByContinent() 
-        {
-            try
-            {
-                var result = await serviceNinja.AmountByContinent();
-                return result;
-            }
-            catch (Exception ex)
-            {
-                var c = new ContinentAndAmountsDTO(ex.Message, new List<CoronaCountryState>());
-
-                var d = new ContinentAndAmountsDTO(ex.GetType().Name, new List<CoronaCountryState>());
-
-                return new List<ContinentAndAmountsDTO>() { c, d };
-            }
-        }
+        public async Task<List<ContinentAndAmountsDTO>> AmountByContinent() => await serviceNinja.AmountByContinent();
 
         #endregion
     }
