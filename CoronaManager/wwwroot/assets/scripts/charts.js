@@ -112,7 +112,7 @@ function stackedChart() {
     }
 
     $.ajax({
-        url: "/stackedbars",
+        url: "/casesbystatus",
         success: onSuccess
     })
 }
