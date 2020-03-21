@@ -1,5 +1,4 @@
-﻿
-namespace CoronaManager.Models
+﻿namespace CoronaManager.Models
 {
     public class Stats
     {

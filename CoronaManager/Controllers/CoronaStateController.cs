@@ -49,10 +49,6 @@ namespace CoronaManager.Controllers
         public async Task<List<CountryAndNumberDTO>> Top5PaisesPorMuertesHoy() => await serviceNinja.Top5PaisesPorMuertesHoy();
 
         [HttpGet]
-        [Route("/radarchart")]
-        public async Task<List<RadarDTO>> RadarChart() => await serviceNinja.RadarChart();
-
-        [HttpGet]
         [Route("/casesbystatus")]
         public async Task<BarChartDTO> CasesByStatus(bool south = false) => await serviceNinja.CasesByStatus(south);
 

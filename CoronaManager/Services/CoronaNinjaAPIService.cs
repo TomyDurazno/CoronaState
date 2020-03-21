@@ -14,17 +14,17 @@ namespace CoronaManager.Services
 {
     public class CoronaNinjaAPIService
     {
-        string Url => "https://corona.lmao.ninja/countries";
-
-        string Hopkins => "https://corona.lmao.ninja/jhucsse";
+        string[] SudAmerica = new [] { "Argentina", "Brazil", "Bolivia", "Chile", "Uruguay", "Peru", "Paraguay", "Colombia" };
 
         #region State Singletons
 
         public AsyncLazy<List<CoronaCountryState>> CountryState;
         public AsyncLazy<List<CoronaHopkinsCSSEState>> HopkinsCSSEState;
+
         public AsyncLazy<List<Continent>> ContinentsState;
         public AsyncLazy<List<ContinentAndAmountsDTO>> ContinentAndAmountsState;
 
+        string Url => "https://corona.lmao.ninja/countries";
         async Task<List<CoronaCountryState>> GetCountryState()
         {
             var client = new RestClient(new Uri(Url));
@@ -35,6 +35,8 @@ namespace CoronaManager.Services
 
             return JArray.Parse(result.Content).ToObject<List<CoronaCountryState>>();
         }
+
+        string Hopkins => "https://corona.lmao.ninja/jhucsse";
         async Task<List<CoronaHopkinsCSSEState>> GetHopkinsCSSEState()
         {
             var client = new RestClient(new Uri(Hopkins));
@@ -46,6 +48,7 @@ namespace CoronaManager.Services
             return JArray.Parse(result.Content).ToObject<List<CoronaHopkinsCSSEState>>();
         }
 
+        //Compounds
         async Task<List<Continent>> GetContinents()
         {
             var files = new [] 
@@ -58,33 +61,18 @@ namespace CoronaManager.Services
                 new { name = "South America", Countries = Resources.South_America.Split(Environment.NewLine).ToList()  } 
             };
 
-            return files.Select(r => new Continent() { Name = r.name, Countries = r.Countries }).ToList();
+            var result = files.Select(r => new Continent() { Name = r.name, Countries = r.Countries }).ToList();
+
+            return await Task.FromResult(result);
         }
-
-        async Task<(string name, IEnumerable<string> countries)> Read(string localpath, string pathToFile)
-        {
-            var name = pathToFile.Split(".").First();
-
-            string source = string.Empty;
-
-            using (StreamReader SourceReader = File.OpenText(localpath + pathToFile))
-            {
-                source = await SourceReader.ReadToEndAsync();
-            }
-
-            var countries = source.Split(Environment.NewLine);
-
-            return (name, countries);
-        }
-
         async Task<List<ContinentAndAmountsDTO>> GetAmountByContinent()
         {
             var countries = await CountryState;
             var continents = await ContinentsState;
 
-            var grouped = countries.GroupBy(c => continents.FirstOrDefault(ct => ct.Countries.Contains(c.country))?.Name ?? "Other");
-
-            return grouped.Select(g => new ContinentAndAmountsDTO(g.Key, g.ToList())).ToList();
+            return countries.GroupBy(c => continents.FirstOrDefault(ct => ct.Countries.Contains(c.country))?.Name ?? "Other")
+                            .Select(g => new ContinentAndAmountsDTO(g.Key, g.ToList()))
+                            .ToList();
         }
 
         #endregion
@@ -93,10 +81,10 @@ namespace CoronaManager.Services
 
         public CoronaNinjaAPIService()
         {
-            CountryState = new AsyncLazy<List<CoronaCountryState>>(() => GetCountryState());
-            HopkinsCSSEState = new AsyncLazy<List<CoronaHopkinsCSSEState>>(() => GetHopkinsCSSEState());
-            ContinentsState = new AsyncLazy<List<Continent>>(() => GetContinents());
-            ContinentAndAmountsState = new AsyncLazy<List<ContinentAndAmountsDTO>>(() => GetAmountByContinent());
+            CountryState = new AsyncLazy<List<CoronaCountryState>>(GetCountryState);
+            HopkinsCSSEState = new AsyncLazy<List<CoronaHopkinsCSSEState>>(GetHopkinsCSSEState);
+            ContinentsState = new AsyncLazy<List<Continent>>(GetContinents);
+            ContinentAndAmountsState = new AsyncLazy<List<ContinentAndAmountsDTO>>(GetAmountByContinent);
         }
 
         #endregion
@@ -107,69 +95,36 @@ namespace CoronaManager.Services
         {
             var value = await CountryState;
 
-            return value.OrderByDescending(c => c.deaths).Take(5).Select(n => new CountryAndNumberDTO() { Country = n.country, Amount = n.deaths }).ToList();
+            return value.OrderByDescending(c => c.deaths)
+                        .Take(5)
+                        .Select(n => new CountryAndNumberDTO(n.country, n.deaths))
+                        .ToList();
         }
 
         public async Task<List<CountryAndNumberDTO>> Top5PaisesPorMuertesHoy()
         {
             var value = await CountryState;
 
-            return value.OrderByDescending(c => c.todayDeaths).Take(5).Select(n => new CountryAndNumberDTO() { Country = n.country, Amount = n.todayDeaths }).ToList();
-        }
-
-        public async Task<List<RadarDTO>> RadarChart()
-        {
-            var value = await CountryState;
-
-            var cuatroPaises = new [] { "Argentina", "Chile", "Uruguay", "Peru", "Paraguay" };
-
-            Label [] GetLabels(CoronaCountryState state) => state.RadarData.Select(d => new Label() { Name = d.Key, Value = d.Value }).ToArray();
-
-            return value.Where(c => cuatroPaises.Contains(c.country)).Select(n => new RadarDTO() { Name = n.country, Labels = GetLabels(n) }).ToList();
+            return value.OrderByDescending(c => c.todayDeaths)
+                        .Take(5)
+                        .Select(n => new CountryAndNumberDTO(n.country, n.todayDeaths))
+                        .ToList();
         }
 
         public async Task<BarChartDTO> CasesByStatus(bool south = false)
         {
             var value = await CountryState;
 
-            List<CoronaCountryState> countries;
+            IEnumerable<CoronaCountryState> countries;
 
-            var sudAmerica = new[] { "Argentina", "Brazil", "Bolivia", "Chile", "Uruguay", "Peru", "Paraguay", "Colombia" };
+            countries = south ? countries = value.OrderByDescending(d => d.deaths).Where(c => SudAmerica.Contains(c.country))
+                              : countries = value.OrderByDescending(d => d.deaths).Take(8);
 
-            if (!south)
-            {
-                countries = value.OrderByDescending(d => d.deaths).Take(8).ToList();
-            }
-            else
-            {
-                countries = value.Where(c => sudAmerica.Contains(c.country)).OrderByDescending(d => d.deaths).ToList();
-            }
+            T [] Scalar<T>(Func<CoronaCountryState, T> func) => countries.Select(func).ToArray();
 
-            var barChartDTO = new BarChartDTO();
-
-            barChartDTO.Labels = countries.Select(c => c.country).ToArray();
-
-            barChartDTO.Datasets = new[]
-            {
-                new DataSetDTO()
-                {
-                    Label = "Active",
-                    Data = countries.Select(c => c.active).ToArray()
-                },
-                new DataSetDTO()
-                {
-                    Label = "Recovered",
-                    Data = countries.Select(c => c.recovered).ToArray()
-                },
-                new DataSetDTO()
-                {
-                    Label = "Critical",
-                    Data = countries.Select(c => c.critical).ToArray()
-                }
-            }
-            .ToList();
-
-            return barChartDTO;
+            return new BarChartDTO(Scalar(c => c.country), new [] { new DataSetDTO("Active", Scalar(c => c.active)),
+                                                                    new DataSetDTO("Recovered", Scalar(c => c.recovered)),
+                                                                    new DataSetDTO("Critical", Scalar(c => c.critical)) });
         }
 
         public async Task<List<CoronaHopkinsCSSEState>> GetHopkinsState() => await HopkinsCSSEState;
