@@ -1,54 +1,22 @@
-﻿$(() => {
-    pieChart();
-    donaChart();
-    stackedChart();
-    stackedChartsouth();
+﻿//READY
+$(() => {
+    top5bydeaths();
+    top5bydeathstoday();
+    casesByStatus();
+    casesByStatusSouth();
     byContinent();
+    lineChart();
 })
 
-function pieChart() {
+function top5bydeaths() {
 
     function onSuccess(data)
     {
+        console.log("top5muertes");
+        console.log(data);
         s = {
             type: "pie",
-            data: {
-                datasets: [{
-                    data: data.map(d => d.amount),
-                    backgroundColor: [window.chartColors.red, window.chartColors.orange, window.chartColors.yellow, window.chartColors.green, window.chartColors.blue],
-                    label: "Top 5 Muertes"
-                }],
-                labels: data.map(d => d.country)
-            },
-            options: {
-                responsive: !0
-            }
-        };
-
-        var pie = document.getElementById("chart-area").getContext("2d");
-        window.myPie2 = new Chart(pie, s);
-    }
-
-    $.ajax({
-        url: "/top5muertes",
-        success: onSuccess
-    })
-}
-
-function donaChart() {
-
-    function onSuccess(data) {
-
-        u = {
-            type: "doughnut",
-            data: {
-                datasets: [{
-                    data: data.map(d => d.amount),
-                    backgroundColor: [window.chartColors.red, window.chartColors.orange, window.chartColors.yellow, window.chartColors.green, window.chartColors.blue],
-                    label: "Top 5 Muertes Hoy"
-                }],
-                labels: data.map(d => d.country)
-            },
+            data: data,
             options: {
                 responsive: !0,
                 legend: {
@@ -63,6 +31,28 @@ function donaChart() {
                     animateRotate: !0
                 }
             }
+        };
+
+        var pie = document.getElementById("chart-area").getContext("2d");
+        window.myPie2 = new Chart(pie, s);
+    }
+
+    $.ajax({
+        url: "/top5bydeaths",
+        success: onSuccess
+    })
+}
+
+function top5bydeathstoday() {
+
+    function onSuccess(data) {
+
+        u = {
+            type: "pie",
+            data: data,
+            options: {
+                responsive: !0
+            }
         }
 
         var n = document.getElementById("doughnut-chart").getContext("2d");
@@ -70,25 +60,18 @@ function donaChart() {
     }
 
     $.ajax({
-        url: "/top5muertesdehoy",
+        url: "/top5bydeathstoday",
         success: onSuccess
     })
 }
 
-function stackedChart() {
+function casesByStatus() {
 
     function onSuccess(data) {
 
-        data.datasets.forEach((d, i) => d.backgroundColor = globalColors[i]);
-
-        var barChartData = {
-            labels: data.labels,
-            datasets: data.datasets
-        };
-
         d = {
             type: "bar",
-            data: barChartData,
+            data: data,
             options: {
                 title: {
                     display: !0
@@ -118,20 +101,13 @@ function stackedChart() {
     })
 }
 
-function stackedChartsouth() {
+function casesByStatusSouth() {
 
     function onSuccess(data) {
 
-        data.datasets.forEach((d, i) => d.backgroundColor = globalColors[i]);
-
-        var barChartData = {
-            labels: data.labels,
-            datasets: data.datasets
-        };
-
         d = {
             type: "bar",
-            data: barChartData,
+            data: data,
             options: {
                 title: {
                     display: !0
@@ -164,19 +140,18 @@ function stackedChartsouth() {
 function byContinent() {
 
     function onSuccess(data) {
+
+        console.log("byContinent");
+
         s = {
             type: "pie",
-            data: {
-                datasets: [{
-                    data: data.map(d => d.cases),
-                    backgroundColor: data.map((d, i) => globalColors[i])
-                }],
-                labels: data.map(d => d.name)
-            },
+            data: data,
             options: {
                 responsive: !0
             }
         };
+
+        console.log(s.data);
 
         var pie = document.getElementById("chart-area-continents").getContext("2d");
         window.myPie2 = new Chart(pie, s);
@@ -185,15 +160,46 @@ function byContinent() {
     $.ajax({
         url: "/byContinent",
         success: onSuccess
-    })
+    });
 }
 
-globalColors = [
-    window.chartColors.blue,
-    window.chartColors.green,
-    window.chartColors.red,
-    window.chartColors.yellow, 
-    window.chartColors.orange,
-    window.chartColors.purple,
-    window.chartColors.grey
-];
+function lineChart()
+{
+    function onSuccess(data) {
+        s = {
+            type: "line",
+            data: data,
+            options: {
+                maintainAspectRatio: true,
+                spanGaps: false,
+                elements: {
+                    line: {
+                        tension: 0.000001
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        stacked: true
+                    }]
+                },
+                plugins: {
+                    filler: {
+                        propagate: false
+                    },
+                    'samples-filler-analyser': {
+                        target: 'chart-analyser'
+                    }
+                }
+            }
+        };
+
+        var pie = document.getElementById("line-chart").getContext("2d");
+
+        window.myLineChart = new Chart(pie, s);        
+    }
+
+    $.ajax({
+        url: "/linechart",
+        success: onSuccess
+    })
+}

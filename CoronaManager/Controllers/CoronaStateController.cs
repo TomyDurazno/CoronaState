@@ -21,18 +21,16 @@ namespace CoronaManager.Controllers
     {
         #region Properties
 
-        ILogger<CoronaStateController> _logger;
-        
+        ILogger<CoronaStateController> _logger;        
         CoronaNinjaAPIService serviceNinja;
 
         #endregion        
 
         #region Constructor
 
-        public CoronaStateController(ILogger<CoronaStateController> logger, IWebHostEnvironment env)
+        public CoronaStateController(ILogger<CoronaStateController> logger)
         {
-            _logger = logger;
-         
+            _logger = logger;         
             serviceNinja = new CoronaNinjaAPIService();
         }
 
@@ -41,24 +39,24 @@ namespace CoronaManager.Controllers
         #region Endpoints
 
         [HttpGet]
-        [Route("/top5muertes")]
-        public async Task<List<CountryAndNumberDTO>> Top5PaisesPorMuertes() => await serviceNinja.Top5PaisesPorMuertes();
+        [Route("/top5bydeaths")]
+        public async Task<ChartDTO> Top5CountriesByDeaths() => await serviceNinja.Top5CountriesByDeaths();
 
         [HttpGet]
-        [Route("/top5muertesdehoy")]
-        public async Task<List<CountryAndNumberDTO>> Top5PaisesPorMuertesHoy() => await serviceNinja.Top5PaisesPorMuertesHoy();
+        [Route("/top5bydeathstoday")]
+        public async Task<ChartDTO> Top5CountriesByDeathsToday() => await serviceNinja.Top5CountriesByDeathsToday();
 
         [HttpGet]
         [Route("/casesbystatus")]
-        public async Task<BarChartDTO> CasesByStatus(bool south = false) => await serviceNinja.CasesByStatus(south);
-
-        [HttpGet]
-        [Route("/hopkins")]
-        public async Task<List<CoronaHopkinsCSSEState>> HopkinsState() => await serviceNinja.GetHopkinsState();
+        public async Task<ChartDTO> CasesByStatus(bool south = false) => await serviceNinja.CasesByStatus(south);
 
         [HttpGet]
         [Route("/bycontinent")]
-        public async Task<List<ContinentAndAmountsDTO>> AmountByContinent() => await serviceNinja.AmountByContinent();
+        public async Task<ChartDTO> AmountByContinent() => await serviceNinja.AmountByContinent();
+
+        [HttpGet]
+        [Route("/linechart")]
+        public async Task<ChartDTO> TodayLineChart() => await serviceNinja.GetTodayLineChart();
 
         #endregion
     }

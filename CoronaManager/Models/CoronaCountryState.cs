@@ -21,5 +21,7 @@ namespace CoronaManager
             { "active" , active },
             { "critical" , critical }
         };
+
+
     }
 }
