@@ -32,3 +32,7 @@ Status 1:
 			}
 		  }
 		
+Status 2:
+
+		Se hizo bastante refactor para generalizar scripts y servicios. Por el momento no se implementó ningún endpoint
+		pegándole a jhucsse 
