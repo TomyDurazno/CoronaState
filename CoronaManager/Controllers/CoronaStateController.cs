@@ -39,7 +39,11 @@ namespace CoronaManager.Controllers
 
         [HttpGet]
         [Route("/casesbystatus")]
-        public async Task<ChartDTO> CasesByStatus(bool south = false) => await serviceNinja.CasesByStatus(south);
+        public async Task<ChartDTO> CasesByStatus() => await serviceNinja.CasesByStatus();
+
+        [HttpGet]
+        [Route("/casesbystatussouth")]
+        public async Task<ChartDTO> CasesByStatusSouth() => await serviceNinja.CasesByStatus(south: true);
 
         [HttpGet]
         [Route("/casesbycontinent")]
@@ -55,7 +59,7 @@ namespace CoronaManager.Controllers
 
         [HttpGet]
         [Route("/linechartsouth")]
-        public async Task<ChartDTO> TodayLineChartSouth() => await serviceNinja.GetTodayLineChartSouth();
+        public async Task<ChartDTO> TodayLineChartSouth() => await serviceNinja.GetTodayLineChart(south: true);
 
         [HttpGet]
         [Route("/linechartalltime")]

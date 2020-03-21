@@ -152,22 +152,7 @@ namespace CoronaManager.Services
                                                                 new DataSetDTO("Critical", Scalar(c => c.critical),  ChartColors.Red) });
         }
 
-        public async Task<ChartDTO> CasesByContinent()
-        {
-            var state = await ContinentAndAmountsState;
-
-            T[] Scalar<T>(Func<ContinentAndAmountsDTO, T> func) => state.Select(func)
-                                                                        .ToArray();
-
-            var datasets = new []
-            {
-                new DataSetDTO("amount", Scalar(c => c.cases), AllColors.Value),
-            };
-
-            return new ChartDTO(Scalar(c => c.Name), datasets);
-        }
-
-        public async Task<ChartDTO> DeathsByContinent()
+        public async Task<ChartDTO> ByContinent(Func<ContinentAndAmountsDTO, int> selector)
         {
             var state = await ContinentAndAmountsState;
 
@@ -176,15 +161,19 @@ namespace CoronaManager.Services
 
             var datasets = new[]
             {
-                new DataSetDTO("amount", Scalar(c => c.deaths), AllColors.Value),
+                new DataSetDTO("amount", Scalar(selector), AllColors.Value),
             };
 
             return new ChartDTO(Scalar(c => c.Name), datasets);
         }
 
-        public async Task<ChartDTO> GetTodayLineChart()
+        public async Task<ChartDTO> CasesByContinent() => await ByContinent(c => c.cases);
+
+        public async Task<ChartDTO> DeathsByContinent() => await ByContinent(c => c.deaths);
+
+        public async Task<ChartDTO> GetTodayLineChart(bool south = false)
         {
-            var state = await CountryState;
+            var state = south ? await SouthAmericaState : await CountryState;
 
             T [] Scalar<T>(Func<CoronaCountryState, T> func) => state.OrderByDescending(s => s.todayDeaths)
                                                                      .Select(func)
@@ -192,20 +181,6 @@ namespace CoronaManager.Services
                                                                      .ToArray();
 
             return new ChartDTO(Scalar(c => c.country), 
-                   new DataSetDTO("Cases", Scalar(c => c.todayCases), ChartColors.Red),
-                   new DataSetDTO("Deaths", Scalar(c => c.todayDeaths), ChartColors.Green));
-        }
-
-        public async Task<ChartDTO> GetTodayLineChartSouth()
-        {
-            var state = await SouthAmericaState;
-
-            T[] Scalar<T>(Func<CoronaCountryState, T> func) => state.OrderByDescending(s => s.todayDeaths)
-                                                                     .Select(func)
-                                                                     .Take(25)
-                                                                     .ToArray();
-
-            return new ChartDTO(Scalar(c => c.country),
                    new DataSetDTO("Cases", Scalar(c => c.todayCases), ChartColors.Red),
                    new DataSetDTO("Deaths", Scalar(c => c.todayDeaths), ChartColors.Green));
         }

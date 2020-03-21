@@ -41,7 +41,7 @@ $(() => {
                 name: "casesByStatusSouth",
                 type: "bar",
                 id: "stacked-bars-chart-south",
-                url: "/casesbystatus?south=true"
+                url: "/casesbystatussouth"
             }
         ];
 
