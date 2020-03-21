@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using CoronaManager.Models;
+﻿using System.Threading.Tasks;
 using CoronaManager.Models.DTO;
 using CoronaManager.Services;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-using Nito.AsyncEx;
-using RestSharp;
 
 namespace CoronaManager.Controllers
 {
@@ -51,12 +42,28 @@ namespace CoronaManager.Controllers
         public async Task<ChartDTO> CasesByStatus(bool south = false) => await serviceNinja.CasesByStatus(south);
 
         [HttpGet]
-        [Route("/bycontinent")]
-        public async Task<ChartDTO> AmountByContinent() => await serviceNinja.AmountByContinent();
+        [Route("/casesbycontinent")]
+        public async Task<ChartDTO> CasesByContinent() => await serviceNinja.CasesByContinent();
+
+        [HttpGet]
+        [Route("/deathsbycontinent")]
+        public async Task<ChartDTO> DeathsByContinent() => await serviceNinja.DeathsByContinent();
 
         [HttpGet]
         [Route("/linechart")]
         public async Task<ChartDTO> TodayLineChart() => await serviceNinja.GetTodayLineChart();
+
+        [HttpGet]
+        [Route("/linechartsouth")]
+        public async Task<ChartDTO> TodayLineChartSouth() => await serviceNinja.GetTodayLineChartSouth();
+
+        [HttpGet]
+        [Route("/linechartalltime")]
+        public async Task<ChartDTO> LineChartAllTime() => await serviceNinja.GetAllTimeLineChart();
+
+        [HttpGet]
+        [Route("/linechartalltimesouth")]
+        public async Task<ChartDTO> LineChartAllTimeSouth() => await serviceNinja.GetAllTimeLineChartSouth();
 
         #endregion
     }

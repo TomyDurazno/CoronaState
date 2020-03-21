@@ -1,173 +1,143 @@
 ﻿//READY
 $(() => {
-    top5bydeaths();
-    top5bydeathstoday();
-    casesByStatus();
-    casesByStatusSouth();
-    byContinent();
-    lineChart();
+
+    var chartsOptions =
+     [{
+        name: "top5Deaths",
+        type: "pie",
+        id: "top5Deaths-chart",
+        url: "/top5bydeaths"      
+    },
+    {
+        name: "top5DeathsToday",
+        type: "pie",
+        id: "top5DeathsToday-chart",
+        url: "/top5bydeathstoday"
+    },
+    {
+        name: "casesbyContinent",
+        type: "pie",
+        id: "chart-area-continents",
+        url: "/casesbyContinent"
+        },
+            {
+                name: "deathsbyContinent",
+                type: "pie",
+                id: "chart-area-continents-deaths",
+                url: "/deathsbyContinent"
+            }];
+
+    chartsOptions.forEach(makeChart);
+
+    var barOptions =
+        [
+            {
+                name: "casesByStatus",
+                type: "bar",
+                id: "stacked-bars-chart",
+                url: "/casesbystatus"
+            },
+            {
+                name: "casesByStatusSouth",
+                type: "bar",
+                id: "stacked-bars-chart-south",
+                url: "/casesbystatus?south=true"
+            }
+        ];
+
+    barOptions.forEach(makeBar);
+
+    var lineOptions =
+        [{
+            name: "linechart",
+            type: "line",
+            id: "line-chart",
+            url: "/linechart"
+        },
+        {
+            name: "linechartalltime",
+            type: "line",
+            id: "line-chart-all-time",
+            url: "/linechartalltime"
+            },
+            {
+                name: "linechartalltimesouth",
+                type: "line",
+                id: "line-chart-all-time-south",
+                url: "/linechartalltimesouth"
+            },
+            {
+                name: "linechartsouth",
+                type: "line",
+                id: "line-chart-south",
+                url: "/linechartsouth"
+            }];
+
+    lineOptions.forEach(makeLineChart);
 })
 
-function top5bydeaths() {
-
-    function onSuccess(data)
-    {
-        console.log("top5muertes");
-        console.log(data);
-        s = {
-            type: "pie",
-            data: data,
-            options: {
-                responsive: !0,
-                legend: {
-                    position: "top"
-                },
-                title: {
-                    display: !1,
-                    text: "Chart.js Doughnut Chart"
-                },
-                animation: {
-                    animateScale: !0,
-                    animateRotate: !0
-                }
-            }
-        };
-
-        var pie = document.getElementById("chart-area").getContext("2d");
-        window.myPie2 = new Chart(pie, s);
-    }
-
-    $.ajax({
-        url: "/top5bydeaths",
-        success: onSuccess
-    })
-}
-
-function top5bydeathstoday() {
+function makeChart(options) {
 
     function onSuccess(data) {
-
-        u = {
-            type: "pie",
-            data: data,
-            options: {
-                responsive: !0
-            }
-        }
-
-        var n = document.getElementById("doughnut-chart").getContext("2d");
-        window.myDoughnut = new Chart(n, u);
-    }
-
-    $.ajax({
-        url: "/top5bydeathstoday",
-        success: onSuccess
-    })
-}
-
-function casesByStatus() {
-
-    function onSuccess(data) {
-
-        d = {
-            type: "bar",
-            data: data,
-            options: {
-                title: {
-                    display: !0
-                },
-                tooltips: {
-                    mode: "index",
-                    intersect: !1
-                },
-                responsive: !0,
-                scales: {
-                    xAxes: [{
-                        stacked: !0
-                    }],
-                    yAxes: [{
-                        stacked: !0
-                    }]
-                }
-            }
-        };
-
-        window.myBar = new Chart(document.getElementById("stacked-bars-chart").getContext("2d"), d);
-    }
-
-    $.ajax({
-        url: "/casesbystatus",
-        success: onSuccess
-    })
-}
-
-function casesByStatusSouth() {
-
-    function onSuccess(data) {
-
-        d = {
-            type: "bar",
-            data: data,
-            options: {
-                title: {
-                    display: !0
-                },
-                tooltips: {
-                    mode: "index",
-                    intersect: !1
-                },
-                responsive: !0,
-                scales: {
-                    xAxes: [{
-                        stacked: !0
-                    }],
-                    yAxes: [{
-                        stacked: !0
-                    }]
-                }
-            }
-        };
-
-        window.myBar = new Chart(document.getElementById("stacked-bars-chart-south").getContext("2d"), d);
-    }
-
-    $.ajax({
-        url: "/casesbystatus?south=true",
-        success: onSuccess
-    })
-}
-
-function byContinent() {
-
-    function onSuccess(data) {
-
-        console.log("byContinent");
 
         s = {
-            type: "pie",
+            type: options.type,
             data: data,
             options: {
                 responsive: !0
             }
         };
 
-        console.log(s.data);
-
-        var pie = document.getElementById("chart-area-continents").getContext("2d");
-        window.myPie2 = new Chart(pie, s);
+        window[options.name] = new Chart(document.getElementById(options.id).getContext("2d"), s);
     }
 
     $.ajax({
-        url: "/byContinent",
+        url: options.url,
         success: onSuccess
     });
 }
 
-function lineChart()
-{
+function makeBar(options) {
+
+    function onSuccess(data) {
+
+        d = {
+            type: options.type,
+            data: data,
+            options: {
+                title: {
+                    display: !0
+                },
+                tooltips: {
+                    mode: "index",
+                    intersect: !1
+                },
+                responsive: !0,
+                scales: {
+                    xAxes: [{
+                        stacked: !0
+                    }],
+                    yAxes: [{
+                        stacked: !0
+                    }]
+                }
+            }
+        };
+
+        window[options.name] = new Chart(document.getElementById(options.id).getContext("2d"), d);
+    }
+
+    $.ajax({
+        url: options.url,
+        success: onSuccess
+    })
+}
+
+function makeLineChart(options) {
+
     function onSuccess(data) {
         s = {
-            type: "line",
+            type: options.type,
             data: data,
             options: {
                 maintainAspectRatio: true,
@@ -193,13 +163,13 @@ function lineChart()
             }
         };
 
-        var pie = document.getElementById("line-chart").getContext("2d");
+        var pie = document.getElementById(options.id).getContext("2d");
 
-        window.myLineChart = new Chart(pie, s);        
+        window[options.name] = new Chart(pie, s);
     }
 
     $.ajax({
-        url: "/linechart",
+        url: options.url,
         success: onSuccess
     })
 }

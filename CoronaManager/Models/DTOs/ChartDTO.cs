@@ -10,7 +10,7 @@ namespace CoronaManager.Models.DTO
         public string [] Labels { get; set; }
         public DataSetDTO [] Datasets { get; set; }
 
-        public ChartDTO(string [] labels, DataSetDTO[] datasets)
+        public ChartDTO(string [] labels, params DataSetDTO [] datasets)
         {
             Labels = labels;
             Datasets = datasets;
