@@ -3,6 +3,7 @@ using CoronaManager.Models.DTO;
 using CoronaManager.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using static CoronaManager.Models.Continent;
 
 namespace CoronaManager.Controllers
 {
@@ -13,16 +14,16 @@ namespace CoronaManager.Controllers
         #region Properties
 
         ILogger<CoronaStateController> _logger;        
-        CoronaNinjaAPIService serviceNinja;
+        CoronaNinjaAPIService NinjaService;
 
         #endregion        
 
         #region Constructor
 
-        public CoronaStateController(ILogger<CoronaStateController> logger)
+        public CoronaStateController(ILogger<CoronaStateController> logger, CoronaNinjaAPIService ninjaService)
         {
-            _logger = logger;         
-            serviceNinja = new CoronaNinjaAPIService();
+            _logger = logger;
+            NinjaService = ninjaService;
         }
 
         #endregion
@@ -31,43 +32,31 @@ namespace CoronaManager.Controllers
 
         [HttpGet]
         [Route("/top5bydeaths")]
-        public async Task<ChartDTO> Top5CountriesByDeaths() => await serviceNinja.Top5CountriesByDeaths();
+        public async Task<ChartDTO> Top5CountriesByDeaths(Continents continent) => await NinjaService.Top5CountriesBy(continent, c => c.deaths);
 
         [HttpGet]
         [Route("/top5bydeathstoday")]
-        public async Task<ChartDTO> Top5CountriesByDeathsToday() => await serviceNinja.Top5CountriesByDeathsToday();
+        public async Task<ChartDTO> Top5CountriesByDeathsToday(Continents continent) => await NinjaService.Top5CountriesBy(continent, c => c.todayDeaths);
 
         [HttpGet]
         [Route("/casesbystatus")]
-        public async Task<ChartDTO> CasesByStatus() => await serviceNinja.CasesByStatus();
-
-        [HttpGet]
-        [Route("/casesbystatussouth")]
-        public async Task<ChartDTO> CasesByStatusSouth() => await serviceNinja.CasesByStatus(south: true);
+        public async Task<ChartDTO> CasesByStatus(Continents continent) => await NinjaService.StatusByContinent(continent);
 
         [HttpGet]
         [Route("/casesbycontinent")]
-        public async Task<ChartDTO> CasesByContinent() => await serviceNinja.CasesByContinent();
+        public async Task<ChartDTO> CasesByContinent() => await NinjaService.ByContinents(c => c.cases);
 
         [HttpGet]
         [Route("/deathsbycontinent")]
-        public async Task<ChartDTO> DeathsByContinent() => await serviceNinja.DeathsByContinent();
+        public async Task<ChartDTO> DeathsByContinent() => await NinjaService.ByContinents(c => c.deaths);
 
         [HttpGet]
         [Route("/linechart")]
-        public async Task<ChartDTO> TodayLineChart() => await serviceNinja.GetTodayLineChart();
-
-        [HttpGet]
-        [Route("/linechartsouth")]
-        public async Task<ChartDTO> TodayLineChartSouth() => await serviceNinja.GetTodayLineChart(south: true);
+        public async Task<ChartDTO> TodayLineChart(Continents continent) => await NinjaService.TodayLineChart(continent);
 
         [HttpGet]
         [Route("/linechartalltime")]
-        public async Task<ChartDTO> LineChartAllTime() => await serviceNinja.GetAllTimeLineChart();
-
-        [HttpGet]
-        [Route("/linechartalltimesouth")]
-        public async Task<ChartDTO> LineChartAllTimeSouth() => await serviceNinja.GetAllTimeLineChartSouth();
+        public async Task<ChartDTO> LineChartAllTime(Continents continent) => await NinjaService.AllTimeDeathsLineChart(continent);
 
         #endregion
     }

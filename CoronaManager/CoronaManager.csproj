@@ -43,8 +43,11 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
+	<ItemGroup>
+  <Content Remove="Tabs\Global.json" />
+</ItemGroup>
+<ItemGroup>
+  <EmbeddedResource Include="Tabs\Global.json" />
+</ItemGroup>
 
 </Project>

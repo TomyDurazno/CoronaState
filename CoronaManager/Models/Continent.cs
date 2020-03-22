@@ -74,6 +74,8 @@
             public static string [] AllCountries() => Helpers.GetAllFields(typeof(Africa));
         }
 
+        #region Static Continents
+
         public static class Asia
         {
             public const string Afghanistan = "Afghanistan";
@@ -296,5 +298,12 @@
             public static string Name() => "Oceania";
             public static string [] AllCountries() => Helpers.GetAllFields(typeof(Oceania));
         }
-    }   
+
+        #endregion
+
+        public enum Continents
+        {
+            All, Asia, Africa, Europe, North_America, South_America, Oceania
+        }
+    }
 }

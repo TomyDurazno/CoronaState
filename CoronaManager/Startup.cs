@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoronaManager.Models;
+using CoronaManager.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,6 +30,9 @@ namespace CoronaManager
             services.AddControllers();
             services.AddControllersWithViews();
             services.AddMvcCore();
+
+            services.AddSingleton(new ConstantsLazyService());
+            services.AddSingleton(provider => new CoronaNinjaAPIService(provider.GetService<ConstantsLazyService>()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

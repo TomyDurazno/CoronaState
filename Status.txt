@@ -36,3 +36,9 @@ Status 2:
 
 		Se hizo bastante refactor para generalizar scripts y servicios. Por el momento no se implementó ningún endpoint
 		pegándole a jhucsse 
+		
+Status 3:
+
+		Se hizo bastante refactor (je!) para poder generar gráficos dinámicamente (a través de un modelo)
+		
+		

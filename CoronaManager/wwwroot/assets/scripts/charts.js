@@ -1,82 +1,56 @@
 ﻿//READY
 $(() => {
 
-    var chartsOptions =
-     [{
-        name: "top5Deaths",
-        type: "pie",
-        id: "top5Deaths-chart",
-        url: "/top5bydeaths"      
-    },
-    {
-        name: "top5DeathsToday",
-        type: "pie",
-        id: "top5DeathsToday-chart",
-        url: "/top5bydeathstoday"
-    },
-    {
-        name: "casesbyContinent",
-        type: "pie",
-        id: "chart-area-continents",
-        url: "/casesbyContinent"
-        },
-            {
-                name: "deathsbyContinent",
-                type: "pie",
-                id: "chart-area-continents-deaths",
-                url: "/deathsbyContinent"
-            }];
+    var pies = $('[data-type="pie"]');
 
-    chartsOptions.forEach(makeChart);
+    pies.map((i, d) => makeOptions(d))
+        .map((i, d) => makePieChart(d));    
 
-    var barOptions =
-        [
-            {
-                name: "casesByStatus",
-                type: "bar",
-                id: "stacked-bars-chart",
-                url: "/casesbystatus"
-            },
-            {
-                name: "casesByStatusSouth",
-                type: "bar",
-                id: "stacked-bars-chart-south",
-                url: "/casesbystatussouth"
-            }
-        ];
+    var lines = $('[data-type="line"]');
 
-    barOptions.forEach(makeBar);
+    lines.map((i, d) => makeOptions(d))
+         .map((i, d) => makeLineChart(d)); 
 
-    var lineOptions =
-        [{
-            name: "linechart",
-            type: "line",
-            id: "line-chart",
-            url: "/linechart"
-        },
-        {
-            name: "linechartalltime",
-            type: "line",
-            id: "line-chart-all-time",
-            url: "/linechartalltime"
-            },
-            {
-                name: "linechartalltimesouth",
-                type: "line",
-                id: "line-chart-all-time-south",
-                url: "/linechartalltimesouth"
-            },
-            {
-                name: "linechartsouth",
-                type: "line",
-                id: "line-chart-south",
-                url: "/linechartsouth"
-            }];
+    var bars = $('[data-type="bar"]');
 
-    lineOptions.forEach(makeLineChart);
+    bars.map((i, d) => makeOptions(d))
+        .map((i, d) => makeBarChart(d)); 
+
+    var tabbuttons = $('[data-tabpanel]');
+
+    tabbuttons.map((i, tab) => $(tab).on("click", function () { tabButtonOnClick(tab, tabbuttons) }));
 })
 
-function makeChart(options) {
+function tabButtonOnClick(tab, tabbuttons) {
+
+    var others = tabbuttons.filter((i, t) => t.id !== tab.id);
+
+    others.map((i, t) => $(t).removeClass("active"));
+
+    $(tab).addClass("active");
+
+    var otherpanels = $(".panel").filter((i, p) => p.id !== tab.dataset.tabpanel);
+
+    otherpanels.map((i, p) => $(p).hide());
+
+    var myPanel = $(".panel").filter((i, p) => p.id === tab.dataset.tabpanel);
+
+    myPanel.map((i, p) => $(p).attr("hidden", false).fadeIn());
+}
+
+function makeOptions(d) {
+    return {
+        name: d.dataset.name,
+        type: d.dataset.type,
+        id: d.id,
+        url: d.dataset.url,
+        data: {
+            continent: d.dataset.continent
+        }
+    }
+}
+
+function makePieChart(options) {
 
     function onSuccess(data) {
 
@@ -93,11 +67,12 @@ function makeChart(options) {
 
     $.ajax({
         url: options.url,
+        data: options.data,
         success: onSuccess
     });
 }
 
-function makeBar(options) {
+function makeBarChart(options) {
 
     function onSuccess(data) {
 
@@ -129,6 +104,7 @@ function makeBar(options) {
 
     $.ajax({
         url: options.url,
+        data: options.data,
         success: onSuccess
     })
 }
@@ -170,6 +146,7 @@ function makeLineChart(options) {
 
     $.ajax({
         url: options.url,
+        data: options.data,
         success: onSuccess
     })
 }

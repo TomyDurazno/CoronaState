@@ -1,0 +1,96 @@
+﻿@model CoronaManager.Models.ViewState
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Corona Virus State</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
+    <!--
+    =========================================================
+    * ArchitectUI HTML Theme Dashboard - v1.0.0
+    =========================================================
+    * Product Page: https://dashboardpack.com
+    * Copyright 2019 DashboardPack (https://dashboardpack.com)
+    * Licensed under MIT (https://github.com/DashboardPack/architectui-html-theme-free/blob/master/LICENSE)
+    =========================================================
+    * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+    -->
+    <link href="./main.css" rel="stylesheet">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="./favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="./favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="./favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="./favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="./favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="./favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
+    <link rel="manifest" href="./favicon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="./favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+</head>
+<body>
+    <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
+        <div class="app-main">
+            <div class="app-main__inner">
+                <ul class="body-tabs body-tabs-layout tabs-animated body-tabs-animated nav">
+                    @foreach (var tab in Model.Tabs)
+                    {
+                        <li class="nav-item">
+                            <a role="tab" class="nav-link @tab.Active" data-tabpanel="@tab.Href" id="@tab.Id" data-toggle="tab">
+                                <span>@tab.FriendlyName</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+                <div class="tab-content">
+                    @foreach (var tab in Model.Tabs)
+                    {
+                        <div class="tab-pane tabs-animation panel @tab.Visibility @tab.Active" id="@tab.Href" role="tabpanel">
+                            @foreach (var row in tab.Rows)
+                            {
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-12 col-xs-12">
+                                        <div class="main-card mb-3 card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">@row.One.Text</h5>
+                                                <canvas id="@row.One.SetId(tab.Continent)" data-name="@row.One.Name" data-url="@row.One.Url" data-continent="@tab.Continent" data-type="@row.One.Type"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if (row.Two != null)
+                                    {
+                                        <div class="col-lg-6 col-md-12 col-xs-12">
+                                            <div class="main-card mb-3 card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">@row.Two.Text</h5>
+                                                    <canvas id="@row.Two.SetId(tab.Continent)" data-name="@row.One.Name" data-url="@row.Two.Url" data-continent="@tab.Continent" data-type="@row.One.Type"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="./assets/scripts/chart.min.js"></script>
+    <script type="text/javascript" src="./assets/scripts/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="./assets/scripts/charts.js"></script>
+</body>
+</html>
