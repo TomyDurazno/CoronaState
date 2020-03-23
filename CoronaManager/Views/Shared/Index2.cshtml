@@ -49,7 +49,7 @@
                     @foreach (var tab in Model.Tabs)
                     {
                         <li class="nav-item">
-                            <a role="tab" class="nav-link @tab.Active" data-tabpanel="@tab.Href" id="@tab.Id" data-toggle="tab">
+                            <a role="tab" class="nav-link @tab.Active" data-continent="@tab.Continent" data-tabpanel="@tab.Href" id="@tab.Id" data-toggle="tab">
                                 <span>@tab.FriendlyName</span>
                             </a>
                         </li>

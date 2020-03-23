@@ -30,6 +30,8 @@ function tabButtonOnClick(tab, tabbuttons) {
 
     $(tab).addClass("active");
 
+    var continent = $(tab).data("continent");
+
     var otherpanels = $(".panel").filter((i, p) => p.id !== tab.dataset.tabpanel);
 
     otherpanels.map((i, p) => $(p).hide());
@@ -38,7 +40,7 @@ function tabButtonOnClick(tab, tabbuttons) {
 
     myPanel.map((i, p) => $(p).attr("hidden", false).show());  
 
-    store.rebuildFromState(() => $("#tab-content-container").fadeIn());
+    store.rebuildFromState(continent, () => $("#tab-content-container"));
 }
 
 function makeOptions(d) {
@@ -157,7 +159,7 @@ store = function () {
             url: options.url,
             data: options.data,
             success: function (data) {
-                optionsDic.push({ id: options.id, name: options.name, data: data, onSuccess: onSuccess });
+                optionsDic.push({ id: options.id, name: options.name, options: options, data: data, onSuccess: onSuccess });
                 onSuccess(data);
             }
         })
@@ -191,12 +193,15 @@ store = function () {
                 element.onSuccess(element.data);
             }
         },
-        rebuildFromState: function (callback) {
-            optionsDic.forEach(o => window[o.name].destroy());
+        rebuildFromState: function (continent, callback) {
+            
+            var charts = optionsDic.filter(o => o.options.data.continent === continent);
+
+            charts.forEach(o => window[o.name].destroy());            
 
             var runner = [];
 
-            optionsDic.forEach(o => runner.push(function () { o.onSuccess(o.data) }));
+            charts.forEach(o => runner.push(function () { o.onSuccess(o.data) }));
 
             if (callback)
                 callback();
