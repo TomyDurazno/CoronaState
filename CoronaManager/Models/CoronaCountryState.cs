@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-
 namespace CoronaManager
 {
     public class CoronaCountryState
     {
+        public CountryInfo countryInfo { get; set; }
         public string country { get; set; }
         public int cases { get; set; }
         public int todayCases { get; set; }
@@ -14,14 +12,15 @@ namespace CoronaManager
         public int active { get; set; }
         public int critical { get; set; }
         public int casesPerOneMillion { get; set; }
+    }
 
-        public Dictionary<string, int> RadarData => new Dictionary<string, int>() 
-        {
-            { "recovered" , recovered },
-            { "active" , active },
-            { "critical" , critical }
-        };
-
-
+    public class CountryInfo
+    {
+        public string iso2 { get; set; }
+        public string iso3 { get; set; }
+        public object _id { get; set; }
+        public double lat { get; set; }
+        public double @long { get; set; }
+        public string flag { get; set; }
     }
 }
