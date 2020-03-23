@@ -1,25 +1,26 @@
 ﻿//READY
-$(() => {
+$(onReady);
 
+function onReady() {
     var pies = $('[data-type="pie"]');
 
     pies.map((i, d) => makeOptions(d))
-        .map((i, d) => makePieChart(d));    
+        .map((i, d) => makePieChart(d));
 
     var lines = $('[data-type="line"]');
 
     lines.map((i, d) => makeOptions(d))
-         .map((i, d) => makeLineChart(d)); 
+        .map((i, d) => makeLineChart(d));
 
     var bars = $('[data-type="bar"]');
 
     bars.map((i, d) => makeOptions(d))
-        .map((i, d) => makeBarChart(d)); 
+        .map((i, d) => makeBarChart(d));
 
     var tabbuttons = $('[data-tabpanel]');
 
     tabbuttons.map((i, tab) => $(tab).on("click", function () { tabButtonOnClick(tab, tabbuttons) }));
-})
+}
 
 function tabButtonOnClick(tab, tabbuttons) {
 
@@ -35,7 +36,9 @@ function tabButtonOnClick(tab, tabbuttons) {
 
     var myPanel = $(".panel").filter((i, p) => p.id === tab.dataset.tabpanel);
 
-    myPanel.map((i, p) => $(p).attr("hidden", false).fadeIn());
+    myPanel.map((i, p) => $(p).attr("hidden", false).show());  
+
+    store.rebuildFromState(() => $("#tab-content-container").fadeIn());
 }
 
 function makeOptions(d) {
@@ -50,11 +53,19 @@ function makeOptions(d) {
     }
 }
 
+function makeChart(options, obj) {
+    if (window[options.name]) {
+        window[options.name].destroy();
+    }
+
+    window[options.name] = new Chart(document.getElementById(options.id).getContext("2d"), obj);
+}
+
 function makePieChart(options) {
 
     function onSuccess(data) {
 
-        s = {
+        obj = {
             type: options.type,
             data: data,
             options: {
@@ -62,21 +73,17 @@ function makePieChart(options) {
             }
         };
 
-        window[options.name] = new Chart(document.getElementById(options.id).getContext("2d"), s);
+        makeChart(options, obj);
     }
 
-    $.ajax({
-        url: options.url,
-        data: options.data,
-        success: onSuccess
-    });
+    store.call(options, onSuccess);
 }
 
 function makeBarChart(options) {
 
     function onSuccess(data) {
 
-        d = {
+        obj = {
             type: options.type,
             data: data,
             options: {
@@ -99,20 +106,16 @@ function makeBarChart(options) {
             }
         };
 
-        window[options.name] = new Chart(document.getElementById(options.id).getContext("2d"), d);
+        makeChart(options, obj);
     }
 
-    $.ajax({
-        url: options.url,
-        data: options.data,
-        success: onSuccess
-    })
+    store.call(options, onSuccess);
 }
 
 function makeLineChart(options) {
 
     function onSuccess(data) {
-        s = {
+        obj = {
             type: options.type,
             data: data,
             options: {
@@ -139,14 +142,73 @@ function makeLineChart(options) {
             }
         };
 
-        var pie = document.getElementById(options.id).getContext("2d");
-
-        window[options.name] = new Chart(pie, s);
+        makeChart(options, obj);
     }
 
-    $.ajax({
-        url: options.url,
-        data: options.data,
-        success: onSuccess
-    })
+    store.call(options, onSuccess);
 }
+
+store = function () {
+
+    var optionsDic = [];
+
+    ajax = function (options, onSuccess) {
+        $.ajax({
+            url: options.url,
+            data: options.data,
+            success: function (data) {
+                optionsDic.push({ id: options.id, name: options.name, data: data, onSuccess: onSuccess });
+                onSuccess(data);
+            }
+        })
+    }
+
+    run = function (runner) {
+
+        callR = function () {
+
+            setTimeout(function () {
+                var r = runner.reverse().pop();
+                if (r != null) {
+                    r();
+                    callR();
+                }
+            }, 20);
+        };
+
+        callR();
+    }
+
+    return {
+        call: function (options, onSuccess) {
+            var element = optionsDic.find(o => o.Id === options.id);
+            if (!element)
+            {   //first time
+                ajax(options, onSuccess);
+            }
+            else
+            {
+                element.onSuccess(element.data);
+            }
+        },
+        rebuildFromState: function (callback) {
+            optionsDic.forEach(o => window[o.name].destroy());
+
+            var runner = [];
+
+            optionsDic.forEach(o => runner.push(function () { o.onSuccess(o.data) }));
+
+            if (callback)
+                callback();
+
+            run(runner);
+
+        },
+        state: function () {
+            return optionsDic;
+        },
+        destroyCharts: function () {
+            optionsDic.forEach(o => window[o.name].destroy());
+        }
+    }
+}();

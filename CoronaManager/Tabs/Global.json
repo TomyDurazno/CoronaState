@@ -1,5 +1,19 @@
 [
   {
+    "Text": "Line Chart",
+    "Name": "linechart",
+    "Id": "line-chart",
+    "Url": "/linechart",
+    "Type": "line"
+  },
+  {
+    "Text": "Line Chart All Time",
+    "Name": "linechartalltime",
+    "Id": "line-chart-all-time",
+    "Url": "/linechartalltime",
+    "Type": "line"
+  },
+  {
     "Text": "Cases by Continent",
     "Name": "casesbyContinent",
     "Id": "chart-area-continents",
@@ -26,20 +40,6 @@
     "Id": "top5DeathsToday-chart",
     "Url": "/top5bydeathstoday",
     "Type": "pie"
-  },
-  {
-    "Text": "Line Chart",
-    "Name": "linechart",
-    "Id": "line-chart",
-    "Url": "/linechart",
-    "Type": "line"
-  },
-  {
-    "Text": "Line Chart All Time",
-    "Name": "linechartalltime",
-    "Id": "line-chart-all-time",
-    "Url": "/linechartalltime",
-    "Type": "line"
   },
   {
     "Text": "Line Chart All Time By Status",
