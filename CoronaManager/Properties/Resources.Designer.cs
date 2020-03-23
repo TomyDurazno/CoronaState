@@ -61,6 +61,15 @@ namespace CoronaManager.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 15.
+        /// </summary>
+        internal static string CacheExpiresIn {
+            get {
+                return ResourceManager.GetString("CacheExpiresIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://corona.lmao.ninja/countries.
         /// </summary>
         internal static string Ninja_Countries_Url {

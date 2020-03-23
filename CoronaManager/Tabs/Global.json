@@ -11,7 +11,7 @@
     "Name": "top5DeathsToday",
     "Id": "top5DeathsToday-chart",
     "Url": "/top5bydeathstoday",
-    "Type": "pie"
+    "Type": "polarArea"
   },
   {
     "Text": "Line Chart (Today)",

@@ -17,6 +17,11 @@ function onReady() {
     bars.map((i, d) => makeOptions(d))
         .map((i, d) => makeBarChart(d));
 
+    var polars = $('[data-type="polarArea"]');
+
+    polars.map((i, d) => makeOptions(d))
+          .map((i, d) => makePolarArea(d));
+
     var tabbuttons = $('[data-tabpanel]');
 
     tabbuttons.map((i, tab) => $(tab).on("click", function () { tabButtonOnClick(tab, tabbuttons) }));
@@ -139,6 +144,27 @@ function makeLineChart(options) {
                     },
                     'samples-filler-analyser': {
                         target: 'chart-analyser'
+                    }
+                }
+            }
+        };
+
+        makeChart(options, obj);
+    }
+
+    store.call(options, onSuccess);
+}
+
+function makePolarArea(options) {
+    function onSuccess(data) {
+        obj = {
+            type: options.type,
+            data: data,
+            options: {
+                "elements": {
+                    "line": {
+                        "tension": 0,
+                        "borderWidth": 3
                     }
                 }
             }

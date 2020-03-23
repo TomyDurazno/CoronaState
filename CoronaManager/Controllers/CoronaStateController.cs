@@ -13,14 +13,14 @@ namespace CoronaManager.Controllers
     {
         #region Properties
 
-        ILogger<CoronaStateController> _logger;        
-        CoronaNinjaAPIService NinjaService;
+        ILogger<CoronaStateController> _logger;
+        IChartService NinjaService;
 
         #endregion        
 
         #region Constructor
 
-        public CoronaStateController(ILogger<CoronaStateController> logger, CoronaNinjaAPIService ninjaService)
+        public CoronaStateController(ILogger<CoronaStateController> logger, IChartService ninjaService)
         {
             _logger = logger;
             NinjaService = ninjaService;

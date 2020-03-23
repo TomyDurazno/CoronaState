@@ -1,17 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CoronaManager.Models;
 using CoronaManager.Services;
+using LazyCache;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace CoronaManager
 {
@@ -31,8 +25,9 @@ namespace CoronaManager
             services.AddControllersWithViews();
             services.AddMvcCore();
 
-            services.AddSingleton(new ConstantsLazyService());
-            services.AddSingleton(provider => new CoronaNinjaAPIService(provider.GetService<ConstantsLazyService>()));
+            services.AddSingleton(typeof(ConstantsLazyService));
+            services.AddSingleton<IAppCache>(new CachingService());
+            services.AddSingleton<IChartService>(provider => new CoronaNinjaAPIService(provider.GetService<ConstantsLazyService>(), provider.GetService<IAppCache>()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

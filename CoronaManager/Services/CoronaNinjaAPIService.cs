@@ -1,8 +1,8 @@
 ﻿using CoronaManager.Models;
 using CoronaManager.Models.DTO;
 using CoronaManager.Properties;
+using LazyCache;
 using Newtonsoft.Json.Linq;
-using Nito.AsyncEx;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -12,8 +12,8 @@ using static CoronaManager.Models.Continent;
 
 namespace CoronaManager.Services
 {
-    public class CoronaNinjaAPIService
-    {        
+    public class CoronaNinjaAPIService : IChartService
+    {
         #region State Getters
 
         async Task<T> GetJArray<T>(string url)
@@ -27,7 +27,13 @@ namespace CoronaManager.Services
             return JArray.Parse(result.Content).ToObject<T>();
         }
 
-        async Task<List<CoronaCountryState>> GetCountryState() => await GetJArray<List<CoronaCountryState>>(Resources.Ninja_Countries_Url);
+        IAppCache cache;
+
+        async Task<List<CoronaCountryState>> GetCountryState()
+        {
+            var expires = DateTimeOffset.Now.AddMinutes(Convert.ToInt32(Resources.CacheExpiresIn));
+            return await cache.GetOrAdd("NinjaState", () => GetJArray<List<CoronaCountryState>>(Resources.Ninja_Countries_Url), expires);
+        }
 
         async Task<List<CoronaHopkinsCSSEState>> GetHopkinsCSSEState() => await GetJArray<List<CoronaHopkinsCSSEState>>(Resources.Ninja_Hopkins_Url);
 
@@ -76,7 +82,7 @@ namespace CoronaManager.Services
 
         #region Constructor
 
-        public CoronaNinjaAPIService(ConstantsLazyService lazyService)
+        public CoronaNinjaAPIService(ConstantsLazyService lazyService, IAppCache cach)
         {
             GlobalState = new AsyncLazy<List<CoronaCountryState>>(GetCountryState);
             HopkinsCSSEState = new AsyncLazy<List<CoronaHopkinsCSSEState>>(GetHopkinsCSSEState);
@@ -84,6 +90,7 @@ namespace CoronaManager.Services
             ContinentAndAmountsState = new AsyncLazy<List<ContinentAndAmountsDTO>>(GetAmountByContinent);
 
             LazyService = lazyService;
+            cache = cach; 
         }
 
         #endregion
@@ -148,9 +155,9 @@ namespace CoronaManager.Services
 
             T [] Scalar<T>(Func<CoronaCountryState, T> func) => state.Take(10).Select(func).ToArray();
 
-            return new ChartDTO(Scalar(c => c.country), new[] { new DataSetDTO("Active", Scalar(c => c.active),  ChartColors.Blue),
-                                                                new DataSetDTO("Recovered", Scalar(c => c.recovered), ChartColors.Green),
-                                                                new DataSetDTO("Critical", Scalar(c => c.critical),  ChartColors.Red) });
+            return new ChartDTO(Scalar(c => c.country), new[] { new DataSetDTO("Active", Scalar(c => c.active),  ChartColors.Cyan),
+                                                                new DataSetDTO("Recovered", Scalar(c => c.recovered), ChartColors.SoftGray),
+                                                                new DataSetDTO("Critical", Scalar(c => c.critical),  ChartColors.SoftRed) });
         }
 
         public async Task<ChartDTO> ByContinents(Func<ContinentAndAmountsDTO, int> selector)
@@ -178,8 +185,8 @@ namespace CoronaManager.Services
                                                                      .ToArray();
 
             return new ChartDTO(Scalar(c => c.country), 
-                   new DataSetDTO("Cases", Scalar(c => c.todayCases), ChartColors.Red),
-                   new DataSetDTO("Deaths", Scalar(c => c.todayDeaths), ChartColors.Green));
+                   new DataSetDTO("Cases", Scalar(c => c.todayCases), ChartColors.SoftGreen),
+                   new DataSetDTO("Deaths", Scalar(c => c.todayDeaths), ChartColors.Red));
         }
 
         public async Task<ChartDTO> AllTimeDeathsLineChart(Continents continent)
@@ -192,8 +199,8 @@ namespace CoronaManager.Services
                                                                      .ToArray();
 
             return new ChartDTO(Scalar(c => c.country), 
-                   new DataSetDTO("Cases", Scalar(c => c.cases), ChartColors.Red),
-                   new DataSetDTO("Deaths", Scalar(c => c.deaths), ChartColors.Green));
+                   new DataSetDTO("Cases", Scalar(c => c.cases), ChartColors.SoftGreen),
+                   new DataSetDTO("Deaths", Scalar(c => c.deaths), ChartColors.Red));
         }
 
         #endregion 
