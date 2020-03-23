@@ -58,5 +58,6 @@ namespace CoronaManager.Models
         public string Type { get; set; }
 
         public string SetId(Continents continent) => $"{Id}_{continent}";
+        public string SetName(Continents continent) => $"{Name}_{continent}";
     }
 }

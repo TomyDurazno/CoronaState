@@ -1,19 +1,5 @@
 [
   {
-    "Text": "Cases by Continent",
-    "Name": "casesbyContinent",
-    "Id": "chart-area-continents",
-    "Url": "/casesbyContinent",
-    "Type": "pie"
-  },
-  {
-    "Text": "Deaths by Continent",
-    "Name": "deathsbyContinent",
-    "Id": "chart-area-continents-deaths",
-    "Url": "/deathsbyContinent",
-    "Type": "pie"
-  },
-  {
     "Text": "Top 5 Deaths",
     "Name": "top5Deaths",
     "Id": "top5Deaths-chart",
@@ -28,7 +14,7 @@
     "Type": "pie"
   },
   {
-    "Text": "Line Chart",
+    "Text": "Line Chart (Today)",
     "Name": "linechart",
     "Id": "line-chart",
     "Url": "/linechart",
@@ -40,6 +26,20 @@
     "Id": "line-chart-all-time",
     "Url": "/linechartalltime",
     "Type": "line"
+  },
+  {
+    "Text": "Cases by Continent",
+    "Name": "casesbyContinent",
+    "Id": "chart-area-continents",
+    "Url": "/casesbyContinent",
+    "Type": "pie"
+  },
+  {
+    "Text": "Deaths by Continent",
+    "Name": "deathsbyContinent",
+    "Id": "chart-area-continents-deaths",
+    "Url": "/deathsbyContinent",
+    "Type": "pie"
   },
   {
     "Text": "Line Chart All Time By Status",

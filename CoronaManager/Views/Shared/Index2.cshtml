@@ -20,6 +20,7 @@
     * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
     -->
     <link href="./main.css" rel="stylesheet">
+    <link href="./style.css" rel="stylesheet">
 
     <link rel="apple-touch-icon" sizes="57x57" href="./favicon/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="./favicon/apple-icon-60x60.png">
@@ -48,13 +49,13 @@
                     @foreach (var tab in Model.Tabs)
                     {
                         <li class="nav-item">
-                            <a role="tab" class="nav-link @tab.Active" data-tabpanel="@tab.Href" id="@tab.Id" data-toggle="tab">
+                            <a role="tab" class="nav-link @tab.Active" data-continent="@tab.Continent" data-tabpanel="@tab.Href" id="@tab.Id" data-toggle="tab">
                                 <span>@tab.FriendlyName</span>
                             </a>
                         </li>
                     }
                 </ul>
-                <div class="tab-content">
+                <div class="tab-content" id="tab-content-container">
                     @foreach (var tab in Model.Tabs)
                     {
                         <div class="tab-pane tabs-animation panel @tab.Visibility @tab.Active" id="@tab.Href" role="tabpanel">
@@ -65,7 +66,7 @@
                                         <div class="main-card mb-3 card">
                                             <div class="card-body">
                                                 <h5 class="card-title">@row.One.Text</h5>
-                                                <canvas id="@row.One.SetId(tab.Continent)" data-name="@row.One.Name" data-url="@row.One.Url" data-continent="@tab.Continent" data-type="@row.One.Type"></canvas>
+                                                <canvas class="chart-expand" id="@row.One.SetId(tab.Continent)" data-name="@row.One.SetName(tab.Continent)" data-url="@row.One.Url" data-continent="@tab.Continent" data-type="@row.One.Type"></canvas>
                                             </div>
                                         </div>
                                     </div>
@@ -76,7 +77,7 @@
                                             <div class="main-card mb-3 card">
                                                 <div class="card-body">
                                                     <h5 class="card-title">@row.Two.Text</h5>
-                                                    <canvas id="@row.Two.SetId(tab.Continent)" data-name="@row.One.Name" data-url="@row.Two.Url" data-continent="@tab.Continent" data-type="@row.One.Type"></canvas>
+                                                    <canvas class="chart-expand" id="@row.Two.SetId(tab.Continent)" data-name="@row.Two.SetName(tab.Continent)" data-url="@row.Two.Url" data-continent="@tab.Continent" data-type="@row.One.Type"></canvas>
                                                 </div>
                                             </div>
                                         </div>
