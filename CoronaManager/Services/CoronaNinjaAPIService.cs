@@ -7,6 +7,8 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 using static CoronaManager.Models.Continent;
 
@@ -144,6 +146,22 @@ namespace CoronaManager.Services
             var datasets = new[]
             {
                 new DataSetDTO("amount", Scalar(selector), LazyService.FiveColors.Value),
+            };
+
+            return new ChartDTO(Scalar(c => c.country), datasets);
+        }
+
+        public async Task<ChartDTO> Top10CountriesBy(Continents continent, Func<CoronaCountryState, int> selector)
+        {
+            var state = await State(continent);
+
+            var countries = state.OrderByDescending(selector).Take(10);
+
+            T[] Scalar<T>(Func<CoronaCountryState, T> func) => countries.Select(func).ToArray();
+
+            var datasets = new[]
+            {
+                new DataSetDTO("amount", Scalar(selector), LazyService.TenColors.Value),
             };
 
             return new ChartDTO(Scalar(c => c.country), datasets);

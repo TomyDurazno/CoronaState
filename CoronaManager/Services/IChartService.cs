@@ -11,6 +11,8 @@ namespace CoronaManager.Services
     {
         public Task<ChartDTO> Top5CountriesBy(Continents continent, Func<CoronaCountryState, int> selector);
 
+        public Task<ChartDTO> Top10CountriesBy(Continents continent, Func<CoronaCountryState, int> selector);
+
         public Task<ChartDTO> StatusByContinent(Continents continent);
 
         public Task<ChartDTO> ByContinents(Func<ContinentAndAmountsDTO, int> selector);

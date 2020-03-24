@@ -47,6 +47,10 @@ namespace CoronaManager.Controllers
         public async Task<ChartDTO> CasesByContinent() => await NinjaService.ByContinents(c => c.cases);
 
         [HttpGet]
+        [Route("/top10casesbyCountries")]
+        public async Task<ChartDTO> Top10CasesByCountries(Continents continent) => await NinjaService.Top10CountriesBy(continent, c => c.cases);
+
+        [HttpGet]
         [Route("/deathsbycontinent")]
         public async Task<ChartDTO> DeathsByContinent() => await NinjaService.ByContinents(c => c.deaths);
 

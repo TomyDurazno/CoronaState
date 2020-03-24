@@ -28,13 +28,6 @@
     "Type": "line"
   },
   {
-    "Text": "Cases by Continent",
-    "Name": "casesbyContinent",
-    "Id": "chart-area-continents",
-    "Url": "/casesbyContinent",
-    "Type": "pie"
-  },
-  {
     "Text": "Deaths by Continent",
     "Name": "deathsbyContinent",
     "Id": "chart-area-continents-deaths",
@@ -42,11 +35,25 @@
     "Type": "pie"
   },
   {
+    "Text": "Cases by Continent",
+    "Name": "casesbyContinent",
+    "Id": "chart-area-continents",
+    "Url": "/casesbyContinent",
+    "Type": "polarArea"
+  },
+  {
     "Text": "Line Chart All Time By Status",
     "Name": "casesByStatus",
     "Id": "stacked-bars-chart",
     "Url": "/casesbystatus",
     "Type": "bar"
+  },
+  {
+    "Text": "Top 10 Cases by Countries",
+    "Name": "top10casesbyCountries",
+    "Id": "top10casesbyCountries-chart",
+    "Url": "/top10casesbyCountries",
+    "Type": "polarArea"
   }
 ]
 

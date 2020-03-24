@@ -15,6 +15,7 @@ namespace CoronaManager.Models
     {
         public Lazy<string[]> AllColors;
         public Lazy<string[]> FiveColors;
+        public Lazy<string[]> TenColors;
 
         public Lazy<string[]> Africa;
         public Lazy<string[]> Asia;
@@ -30,6 +31,7 @@ namespace CoronaManager.Models
         {
             AllColors = new Lazy<string[]>(ChartColors.GetAllColors, true);
             FiveColors = new Lazy<string[]>(() => AllColors.Value.Take(5).ToArray());
+            TenColors = new Lazy<string[]>(() => AllColors.Value.Take(10).ToArray());
 
             Africa = new Lazy<string[]>(Continent.Africa.AllCountries);
             Asia = new Lazy<string[]>(Continent.Asia.AllCountries);
