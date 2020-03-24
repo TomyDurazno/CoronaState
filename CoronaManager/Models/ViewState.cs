@@ -52,12 +52,12 @@ namespace CoronaManager.Models
     public class Chart
     {
         public string Text { get; set; }
-        public string Name { get; set; }
-        public string Id { get; set; }
+        public string Name { get => Text.Replace(" ", "_"); }
+        
         public string Url { get; set; }
         public string Type { get; set; }
 
-        public string SetId(Continents continent) => $"{Id}_{continent}";
+        public string SetId(Continents continent) => $"{Name}_{continent}_Id";
         public string SetName(Continents continent) => $"{Name}_{continent}";
     }
 }

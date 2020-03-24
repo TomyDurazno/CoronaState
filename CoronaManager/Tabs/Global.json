@@ -1,59 +1,53 @@
 [
   {
     "Text": "Top 5 Deaths",
-    "Name": "top5Deaths",
-    "Id": "top5Deaths-chart",
     "Url": "/top5bydeaths",
     "Type": "pie"
   },
   {
     "Text": "Top 5 Deaths Today",
-    "Name": "top5DeathsToday",
-    "Id": "top5DeathsToday-chart",
     "Url": "/top5bydeathstoday",
     "Type": "polarArea"
   },
   {
     "Text": "Line Chart (Today)",
-    "Name": "linechart",
-    "Id": "line-chart",
     "Url": "/linechart",
     "Type": "line"
   },
   {
     "Text": "Line Chart All Time",
-    "Name": "linechartalltime",
-    "Id": "line-chart-all-time",
     "Url": "/linechartalltime",
     "Type": "line"
   },
   {
     "Text": "Deaths by Continent",
-    "Name": "deathsbyContinent",
-    "Id": "chart-area-continents-deaths",
     "Url": "/deathsbyContinent",
     "Type": "pie"
   },
   {
     "Text": "Cases by Continent",
-    "Name": "casesbyContinent",
-    "Id": "chart-area-continents",
     "Url": "/casesbyContinent",
     "Type": "polarArea"
   },
   {
+    "Text": "Top 10 Cases by Countries",
+    "Url": "/top10casesbyCountries",
+    "Type": "polarArea"
+  },
+  {
+    "Text": "Top 10 Deaths by Countries",
+    "Url": "/top10deathsbyCountries",
+    "Type": "polarArea"
+  },
+  {
     "Text": "Line Chart All Time By Status",
-    "Name": "casesByStatus",
-    "Id": "stacked-bars-chart",
     "Url": "/casesbystatus",
     "Type": "bar"
   },
   {
-    "Text": "Top 10 Cases by Countries",
-    "Name": "top10casesbyCountries",
-    "Id": "top10casesbyCountries-chart",
-    "Url": "/top10casesbyCountries",
-    "Type": "polarArea"
+    "Text": "Cases Per One Million",
+    "Url": "/casesperonemillion",
+    "Type": "line"
   }
 ]
 

@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 using static CoronaManager.Models.Continent;
 
@@ -75,7 +74,7 @@ namespace CoronaManager.Services
             var countries = await GlobalState;
             var continents = await ContinentsState;
 
-            return countries.GroupBy(c => continents.FirstOrDefault(ct => ct.Countries.Contains(c.country))?.Name ?? "Other")
+            return countries.GroupBy(c => continents.FirstOrDefault(ct => ct.Countries.Contains(c.Country))?.Name ?? "Other")
                             .Select(g => new ContinentAndAmountsDTO(g.Key, g.ToList()))
                             .ToList();
         }
@@ -105,27 +104,27 @@ namespace CoronaManager.Services
                     return await GlobalState;
                 case Continents.Asia:
                     return (await GlobalState)
-                            .Where(c => LazyService.Asia.Value.Contains(c.country))
+                            .Where(c => LazyService.Asia.Value.Contains(c.Country))
                             .ToList();
                 case Continents.Africa:
                     return (await GlobalState)
-                            .Where(c => LazyService.Africa.Value.Contains(c.country))
+                            .Where(c => LazyService.Africa.Value.Contains(c.Country))
                             .ToList();
                 case Continents.Europe:
                     return (await GlobalState)
-                            .Where(c => LazyService.Europe.Value.Contains(c.country))
+                            .Where(c => LazyService.Europe.Value.Contains(c.Country))
                             .ToList();
                 case Continents.North_America:
                     return (await GlobalState)
-                            .Where(c => LazyService.North_America.Value.Contains(c.country))
+                            .Where(c => LazyService.North_America.Value.Contains(c.Country))
                             .ToList();
                 case Continents.South_America:
                     return (await GlobalState)
-                            .Where(c => LazyService.South_America.Value.Contains(c.country))
+                            .Where(c => LazyService.South_America.Value.Contains(c.Country))
                             .ToList();
                 case Continents.Oceania:
                     return (await GlobalState)
-                            .Where(c => LazyService.Oceania.Value.Contains(c.country))
+                            .Where(c => LazyService.Oceania.Value.Contains(c.Country))
                             .ToList();
                 default:
                     return await GlobalState;
@@ -134,91 +133,63 @@ namespace CoronaManager.Services
 
         #region Public API Methods
 
-        public async Task<ChartDTO> Top5CountriesBy(Continents continent, Func<CoronaCountryState, int> selector)
+        //One Color for each dataset
+        public async Task<ChartDTO> TakeBy(int n, Continents continent, Func<CoronaCountryState, string> namer, Expression<Func<CoronaCountryState, int>> expression)
         {
             var state = await State(continent);
 
+            var prop = (MemberExpression)expression.Body;
+            var name = prop.Member.Name;
+
+            var selector = expression.Compile();
+
             var countries = state.OrderByDescending(selector)
-                                 .Take(5);
+                                 .Take(n);
 
             T [] Scalar<T>(Func<CoronaCountryState, T> func) => countries.Select(func).ToArray();
 
-            var datasets = new[]
+            var datasets = new []
             {
-                new DataSetDTO("amount", Scalar(selector), LazyService.FiveColors.Value),
+                new DataSetDTO(name, Scalar(selector), LazyService.AllColors.Value.Take(n).ToArray()),
             };
 
-            return new ChartDTO(Scalar(c => c.country), datasets);
+            return new ChartDTO(Scalar(namer), datasets);
         }
 
-        public async Task<ChartDTO> Top10CountriesBy(Continents continent, Func<CoronaCountryState, int> selector)
+        //One color for each category
+        public async Task<ChartDTO> TakeByMultiple(int n, Continents continent, Func<CoronaCountryState, string> namer, params Expression<Func<CoronaCountryState, int>>[] expressions)
         {
             var state = await State(continent);
 
-            var countries = state.OrderByDescending(selector).Take(10);
+            var orderer = expressions.First().Compile();
 
-            T[] Scalar<T>(Func<CoronaCountryState, T> func) => countries.Select(func).ToArray();
+            T [] Scalar<T>(Func<CoronaCountryState, T> func) => state.OrderByDescending(orderer)
+                                                                     .Select(func)
+                                                                     .Take(n)
+                                                                     .ToArray();
 
-            var datasets = new[]
+            DataSetDTO GetDataSetFromExpression((Expression<Func<CoronaCountryState, int>> expr, string color) tupla)
             {
-                new DataSetDTO("amount", Scalar(selector), LazyService.TenColors.Value),
-            };
+                var prop = (MemberExpression)tupla.expr.Body;
+                var name = prop.Member.Name;
 
-            return new ChartDTO(Scalar(c => c.country), datasets);
-        }
+                var selector = tupla.expr.Compile();
 
-        public async Task<ChartDTO> StatusByContinent(Continents continent)
-        {
-            var state = await State(continent);
+                return new DataSetDTO(name, Scalar(selector), tupla.color);
+            }
 
-            T [] Scalar<T>(Func<CoronaCountryState, T> func) => state.Take(10).Select(func).ToArray();
+            var datasets = expressions.Zip(LazyService.AllColors.Value).Select(GetDataSetFromExpression).ToArray();
 
-            return new ChartDTO(Scalar(c => c.country), new[] { new DataSetDTO("Active", Scalar(c => c.active),  ChartColors.Cyan),
-                                                                new DataSetDTO("Recovered", Scalar(c => c.recovered), ChartColors.SoftGray),
-                                                                new DataSetDTO("Critical", Scalar(c => c.critical),  ChartColors.SoftRed) });
+            return new ChartDTO(Scalar(namer), datasets);
         }
 
         public async Task<ChartDTO> ByContinents(Func<ContinentAndAmountsDTO, int> selector)
         {
             var state = await ContinentAndAmountsState;
 
-            T[] Scalar<T>(Func<ContinentAndAmountsDTO, T> func) => state.Select(func)
-                                                                        .ToArray();
+            T [] Scalar<T>(Func<ContinentAndAmountsDTO, T> func) => state.Select(func).ToArray();
 
-            var datasets = new[]
-            {
-                new DataSetDTO("amount", Scalar(selector), LazyService.AllColors.Value),
-            };
-
-            return new ChartDTO(Scalar(c => c.Name), datasets);
-        }
-
-        public async Task<ChartDTO> TodayLineChart(Continents continent)
-        {
-            var state = await State(continent);
-
-            T [] Scalar<T>(Func<CoronaCountryState, T> func) => state.OrderByDescending(s => s.todayDeaths)
-                                                                     .Select(func)
-                                                                     .Take(25)
-                                                                     .ToArray();
-
-            return new ChartDTO(Scalar(c => c.country), 
-                   new DataSetDTO("Cases", Scalar(c => c.todayCases), ChartColors.SoftGreen),
-                   new DataSetDTO("Deaths", Scalar(c => c.todayDeaths), ChartColors.Red));
-        }
-
-        public async Task<ChartDTO> AllTimeDeathsLineChart(Continents continent)
-        {
-            var state = await State(continent);
-
-            T [] Scalar<T>(Func<CoronaCountryState, T> func) => state.OrderByDescending(s => s.deaths)
-                                                                     .Select(func)
-                                                                     .Take(25)
-                                                                     .ToArray();
-
-            return new ChartDTO(Scalar(c => c.country), 
-                   new DataSetDTO("Cases", Scalar(c => c.cases), ChartColors.SoftGreen),
-                   new DataSetDTO("Deaths", Scalar(c => c.deaths), ChartColors.Red));
+            return new ChartDTO(Scalar(c => c.Name), new DataSetDTO("amount", Scalar(selector), LazyService.AllColors.Value));
         }
 
         #endregion 

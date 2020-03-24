@@ -1,7 +1,6 @@
 ﻿using CoronaManager.Models.DTO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using static CoronaManager.Models.Continent;
 
@@ -9,16 +8,10 @@ namespace CoronaManager.Services
 {
     public interface IChartService
     {
-        public Task<ChartDTO> Top5CountriesBy(Continents continent, Func<CoronaCountryState, int> selector);
+        public Task<ChartDTO> TakeBy(int n, Continents continent, Func<CoronaCountryState, string> namer, Expression<Func<CoronaCountryState, int>> expression);
 
-        public Task<ChartDTO> Top10CountriesBy(Continents continent, Func<CoronaCountryState, int> selector);
-
-        public Task<ChartDTO> StatusByContinent(Continents continent);
+        public Task<ChartDTO> TakeByMultiple(int n, Continents continent, Func<CoronaCountryState, string> namer, params Expression<Func<CoronaCountryState, int>>[] expressions);
 
         public Task<ChartDTO> ByContinents(Func<ContinentAndAmountsDTO, int> selector);
-
-        public Task<ChartDTO> TodayLineChart(Continents continent);
-
-        public Task<ChartDTO> AllTimeDeathsLineChart(Continents continent);
     }
 }

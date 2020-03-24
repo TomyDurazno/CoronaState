@@ -2,25 +2,21 @@
 $(onReady);
 
 function onReady() {
-    var pies = $('[data-type="pie"]');
 
-    pies.map((i, d) => makeOptions(d))
-        .map((i, d) => makePieChart(d));
-
-    var lines = $('[data-type="line"]');
-
-    lines.map((i, d) => makeOptions(d))
-        .map((i, d) => makeLineChart(d));
-
-    var bars = $('[data-type="bar"]');
-
-    bars.map((i, d) => makeOptions(d))
-        .map((i, d) => makeBarChart(d));
-
-    var polars = $('[data-type="polarArea"]');
-
-    polars.map((i, d) => makeOptions(d))
-          .map((i, d) => makePolarArea(d));
+    [
+        { type: "pie", builder: makePieChart },
+        { type: "line", builder: makeLineChart },
+        { type: "bar", builder: makeBarChart },
+        { type: "polarArea", builder: makePolarArea },
+        { type: "radar", builder: makeRadar }
+    ]
+    .map(c => {
+        return {
+            obj: $('[data-type="' + c.type + '"]'),
+            builder: c.builder
+        }
+    })
+    .map(c => c.obj.get().map(d => c.builder(makeOptions(d))));    
 
     var tabbuttons = $('[data-tabpanel]');
 
@@ -156,6 +152,27 @@ function makeLineChart(options) {
 }
 
 function makePolarArea(options) {
+    function onSuccess(data) {
+        obj = {
+            type: options.type,
+            data: data,
+            options: {
+                "elements": {
+                    "line": {
+                        "tension": 0,
+                        "borderWidth": 3
+                    }
+                }
+            }
+        };
+
+        makeChart(options, obj);
+    }
+
+    store.call(options, onSuccess);
+}
+
+function makeRadar(options) {
     function onSuccess(data) {
         obj = {
             type: options.type,

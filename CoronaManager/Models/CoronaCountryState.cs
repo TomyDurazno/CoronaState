@@ -3,15 +3,15 @@ namespace CoronaManager
     public class CoronaCountryState
     {
         public CountryInfo countryInfo { get; set; }
-        public string country { get; set; }
-        public int cases { get; set; }
-        public int todayCases { get; set; }
-        public int deaths { get; set; }
-        public int todayDeaths { get; set; }
-        public int recovered { get; set; }
-        public int active { get; set; }
-        public int critical { get; set; }
-        public int casesPerOneMillion { get; set; }
+        public string Country { get; set; }
+        public int Cases { get; set; }
+        public int TodayCases { get; set; }
+        public int Deaths { get; set; }
+        public int TodayDeaths { get; set; }
+        public int Recovered { get; set; }
+        public int Active { get; set; }
+        public int Critical { get; set; }
+        public int CasesPerOneMillion { get; set; }
     }
 
     public class CountryInfo

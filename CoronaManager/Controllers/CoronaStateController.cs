@@ -32,15 +32,15 @@ namespace CoronaManager.Controllers
 
         [HttpGet]
         [Route("/top5bydeaths")]
-        public async Task<ChartDTO> Top5CountriesByDeaths(Continents continent) => await NinjaService.Top5CountriesBy(continent, c => c.deaths);
+        public async Task<ChartDTO> Top5CountriesByDeaths(Continents continent) => await NinjaService.TakeBy(5, continent, c => c.Country, c => c.Deaths);
 
         [HttpGet]
         [Route("/top5bydeathstoday")]
-        public async Task<ChartDTO> Top5CountriesByDeathsToday(Continents continent) => await NinjaService.Top5CountriesBy(continent, c => c.todayDeaths);
+        public async Task<ChartDTO> Top5CountriesByDeathsToday(Continents continent) => await NinjaService.TakeBy(5, continent, c => c.Country, c => c.TodayDeaths);
 
         [HttpGet]
         [Route("/casesbystatus")]
-        public async Task<ChartDTO> CasesByStatus(Continents continent) => await NinjaService.StatusByContinent(continent);
+        public async Task<ChartDTO> CasesByStatus(Continents continent) => await NinjaService.TakeByMultiple(10, continent, c => c.Country, c => c.Active, c => c.Recovered, c => c.Critical);
 
         [HttpGet]
         [Route("/casesbycontinent")]
@@ -48,7 +48,11 @@ namespace CoronaManager.Controllers
 
         [HttpGet]
         [Route("/top10casesbyCountries")]
-        public async Task<ChartDTO> Top10CasesByCountries(Continents continent) => await NinjaService.Top10CountriesBy(continent, c => c.cases);
+        public async Task<ChartDTO> Top10CasesByCountries(Continents continent) => await NinjaService.TakeBy(10, continent, c => c.Country, c => c.Cases);
+
+        [HttpGet]
+        [Route("/top10deathsbyCountries")]
+        public async Task<ChartDTO> Top10DeathsByCountries(Continents continent) => await NinjaService.TakeBy(10, continent, c => c.Country, c => c.Deaths);
 
         [HttpGet]
         [Route("/deathsbycontinent")]
@@ -56,11 +60,16 @@ namespace CoronaManager.Controllers
 
         [HttpGet]
         [Route("/linechart")]
-        public async Task<ChartDTO> TodayLineChart(Continents continent) => await NinjaService.TodayLineChart(continent);
+        public async Task<ChartDTO> TodayLineChart(Continents continent) => await NinjaService.TakeByMultiple(25, continent, c => c.Country, c => c.TodayCases, c => c.TodayDeaths);
 
         [HttpGet]
         [Route("/linechartalltime")]
-        public async Task<ChartDTO> LineChartAllTime(Continents continent) => await NinjaService.AllTimeDeathsLineChart(continent);
+        public async Task<ChartDTO> LineChartAllTime(Continents continent) => await NinjaService.TakeByMultiple(25, continent, c => c.Country, c => c.Cases, c => c.Deaths);
+
+        [HttpGet]
+        [Route("/casesperonemillion")]
+        //TakeByMultiple con una sola expression para no perder el color de la categoría
+        public async Task<ChartDTO> CasesPerOneMillion(Continents continent) => await NinjaService.TakeByMultiple(10, continent, c => c.Country, c => c.CasesPerOneMillion);
 
         #endregion
     }

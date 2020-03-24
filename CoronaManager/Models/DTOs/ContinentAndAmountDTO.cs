@@ -20,14 +20,14 @@ namespace CoronaManager.Models.DTO
         {
             Name = name;
 
-            cases = countries.Sum(c => c.cases);
-            deaths = countries.Sum(c => c.deaths);
-            todayCases = countries.Sum(c => c.todayCases);
-            todayDeaths = countries.Sum(c => c.todayDeaths);
-            recovered = countries.Sum(c => c.recovered);
-            active = countries.Sum(c => c.active);
-            critical = countries.Sum(c => c.critical);
-            casesPerOneMillion = countries.Sum(c => c.casesPerOneMillion);
+            cases = countries.Sum(c => c.Cases);
+            deaths = countries.Sum(c => c.Deaths);
+            todayCases = countries.Sum(c => c.TodayCases);
+            todayDeaths = countries.Sum(c => c.TodayDeaths);
+            recovered = countries.Sum(c => c.Recovered);
+            active = countries.Sum(c => c.Active);
+            critical = countries.Sum(c => c.Critical);
+            casesPerOneMillion = countries.Sum(c => c.CasesPerOneMillion);
         }
     }
 }
