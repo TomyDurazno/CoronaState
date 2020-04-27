@@ -121,7 +121,7 @@
     <value>15</value>
   </data>
   <data name="Ninja_Countries_Url" xml:space="preserve">
-    <value>https://corona.lmao.ninja/countries</value>
+    <value>https://corona.lmao.ninja/v2/countries</value>
   </data>
   <data name="Ninja_Hopkins_Url" xml:space="preserve">
     <value>https://corona.lmao.ninja/jhucsse</value>

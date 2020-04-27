@@ -70,7 +70,7 @@ namespace CoronaManager.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://corona.lmao.ninja/countries.
+        ///   Looks up a localized string similar to https://corona.lmao.ninja/v2/countries.
         /// </summary>
         internal static string Ninja_Countries_Url {
             get {
